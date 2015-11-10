@@ -50,7 +50,7 @@ self.onmessage = function(e) {
 
   		{
   			var client = new XMLHttpRequest();
-  			client.open('GET', 'ajax/results/?timestamp='+new Date().getTime(), true);
+  			client.open('GET', 'ajax/results?timestamp='+new Date().getTime(), true);
   			client.onreadystatechange = function() {
 
           //self.postMessage("client.readyState:"+client.readyState + " client.status:"+client.status);
