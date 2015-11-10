@@ -1,0 +1,292 @@
+<!doctype html>
+<head>
+	<meta charset="UTF-8">
+	<title>6-1 Nhl stats</title>
+	<!--jquery, but smaller-->
+	<script src="zepto.min.js"></script>
+	<!--make the stats' lists-->
+	<script src="list.js"></script>
+	<link rel="stylesheet" type="text/css" href="styles/ungrid.css">
+	<link rel="stylesheet" type="text/css" href="styles/nhl.css">
+</head>
+
+<body>
+	<form id="resultForm" action="#" onsubmit="return false;">
+		<div id="divInsideForm">
+			
+			<div class="row">	
+				<div class="col emptyCol" ></div>
+				<div class="col" id="homeHeader">
+					<div class="row formHeader">
+						Home
+					</div>
+					<div class="row">
+						<td ><input hidden id="home1" name="home" type="checkbox" onchange="document.getElementById('away1').checked=false;" value="Adam"><label for="home1">Adam</label> </td>
+					</div>
+					<div class="row">
+						<td><input hidden id="home2" name="home" type="checkbox" onchange="document.getElementById('away2').checked=false;" value="Bert"><label for="home2">Bert</label> </td>
+					</div>
+					<div class="row">
+						<td><input hidden id="home3" name="home" type="checkbox" onchange="document.getElementById('away3').checked=false;"  value="Cecilia"><label for="home3">Cecilia</label> </td>
+					</div>
+					<div class="row">
+						<td><input hidden id="home4" name="home" type="checkbox" onchange="document.getElementById('away4').checked=false;" value="David"><label for="home4">David</label> </td>
+					</div>
+					<div class="row">
+						<td><input hidden id="home5" name="home" type="checkbox" onchange="document.getElementById('away5').checked=false;" value="Esther"><label for="home5">Esther</label> </td>
+					</div>
+					<div class="row">
+						<td><input hidden id="home6" name="home" type="checkbox" value="other"><label for="home6">Other</label></td>
+					</div>
+				</div>
+				<div class="col" id="awayHeader">
+					<div class="row formHeader">
+						Away
+					</div>
+					<div class="row">
+						<td ><input hidden id="away1" name="away" type="checkbox" onchange="clearOnline();document.getElementById('home1').checked=false;" value="Adam"><label for="away1">Adam</label> </td>
+					</div>
+					<div class="row">
+						<td><input hidden id="away2" name="away" type="checkbox" onchange="clearOnline();document.getElementById('home2').checked=false;" value="Bert"><label for="away2">Bert</label></td>
+					</div>
+					<div class="row">
+						<td><input hidden id="away3" name="away" type="checkbox" onchange="clearOnline();document.getElementById('home3').checked=false;" value="Cecilia"><label for="away3">Cecilia</label></td>
+					</div>
+					<div class="row">
+						<td><input hidden id="away4" name="away" type="checkbox" onchange="clearOnline();document.getElementById('home4').checked=false;" value="David"><label for="away4">David</label></td>
+					</div>
+					<div class="row">
+						<td><input hidden id="away5" name="away" type="checkbox" onchange="clearOnline();document.getElementById('home5').checked=false;" value="Esther"><label for="away5">Esther</label></td>
+					</div>
+					<div class="row">
+						<td><input hidden id="away6" name="away" type="checkbox" onchange="clearOnline();" value="other"><label for="away6">Other</label></td>
+					</div>
+					<div class="row">
+						<td><input hidden id="away7" name="away" type="checkbox" onchange="clearAwaysExceptOnline();" value="online"><label for="away7">Online</label></td>
+					</div>
+				</div>
+				<div class="col" id="resultHeader">
+					<div class="row formHeader">
+						Result
+					</div>
+					<div class="row">
+						<tr>
+							<td >
+								<select id="homegoals" name="homegoals" onchange="$(this).addClass('checked');if($(this).val() === '')$(this).removeClass('checked');"><option value=""></option></select>
+								<span style="font-size:3em;color:rgb(88, 255, 88)">-</span>
+								<select id="awaygoals" name="awaygoals" onchange="$(this).addClass('checked');if($(this).val() === '')$(this).removeClass('checked');"><option value=""></option></select>
+							</td>
+						</tr>
+					
+					</div>
+				</div>
+				<div class="col emptyCol"></div>
+					
+			</div>
+			
+		</div>
+		<button onclick="serializeFormAndSend();" >Send</button>
+	</form>
+	<div id="errorDiv"></div>
+	<button id="loadStatsButton" onClick="loadStats()">Show me 'em stats!</button>
+	<div id="statsDiv" style="display:none">
+		<p id="historytext"><span id="showHistorySpan" onclick="ShowStats.populateHistory();$('#history').toggle();$(this).toggleClass('checked');" >History</span>
+			<span id="history" style="display:none">
+				
+			</span>
+		</p>
+
+		<p> Show results for when <select id="teamPlayersAmountSelect" class="checked" onchange="ShowStats.changeAmountOfTeamPlayers();$(this).addClass('checked');if($(this).val() === '')$(this).removeClass('checked');">
+			<!--option value=""> </option-->
+			<option value="all">any amount of</option>
+			<option value="1">exactly 1</option>
+			<option value="withTeammates" selected>more than one</option>
+			<option value="2">exactly 2</option>
+			<option value="3">exactly 3</option>
+			<option value="4">exactly 4</option>
+		</select> Players were on the same team 
+		</p> 
+		<div id="resultUl">
+			<ul>
+				<li id="headerList"></li>
+			</ul>
+			<ul class="list"></ul>
+		</div>
+		<p>Working with teammembers (sorted by winning percentage)</p>
+		<div id="teammemberResultDiv">
+			<ul id="teammemberResultUl">
+				
+
+			</ul>
+		</div>
+	</div> <!--statsDiv-->
+
+	<p style="margin-top:10px;"><a href="championship/">Championship!</a></p>
+
+
+
+	<div id="backgroundWrapDiv">
+		<pre class="background-ascii" ></pre>
+		<pre class="background-ascii" ></pre>
+		<pre class="background-ascii" ></pre>
+		<pre class="background-ascii" ></pre><pre class="background-ascii" ></pre>
+		<pre class="background-ascii" ></pre>
+		<pre class="background-ascii" ></pre>
+		<pre class="background-ascii" ></pre>
+		<pre class="background-ascii" ></pre>
+		<pre class="background-ascii" ></pre>
+
+		
+	</div>
+
+
+</body>
+
+
+<script>
+
+	function serializeFormAndSend(){
+		if (checkResultForm()){
+			var data = $('form').serialize();
+			$.post('ajax/result', data,
+				function(){
+			
+					location.reload(false);
+			
+				});
+		}
+	}
+
+	function checkResultForm(){
+		$('#homeHeader > .formHeader').removeClass("errorHeader");
+		$('#awayHeader > .formHeader').removeClass("errorHeader");
+		$('#resultHeader > .formHeader').removeClass("errorHeader");
+		if(document.getElementById("home1").checked === false &&
+			document.getElementById("home2").checked === false &&
+			document.getElementById("home3").checked === false &&
+			document.getElementById("home4").checked === false &&
+			document.getElementById("home5").checked === false &&
+			document.getElementById("home6").checked === false){
+				$('#homeHeader > .formHeader').addClass("errorHeader");
+				document.getElementById("errorDiv").innerHTML = "Fill all holes!";
+				return false;
+			}
+		if( document.getElementById("away1").checked === false &&
+			document.getElementById("away2").checked === false &&
+			document.getElementById("away3").checked === false &&
+			document.getElementById("away4").checked === false &&
+			document.getElementById("away5").checked === false &&
+			document.getElementById("away6").checked === false &&
+			document.getElementById("away7").checked === false ){
+				$('#awayHeader > .formHeader').addClass("errorHeader");
+				document.getElementById("errorDiv").innerHTML = "Fill all holes!";
+				return false;
+		}
+		if( document.getElementById("homegoals").value === "" ||
+			document.getElementById("awaygoals").value === ""){
+			$('#resultHeader > .formHeader').addClass("errorHeader");
+			document.getElementById("errorDiv").innerHTML = "Fill all holes!";
+			return false;
+		}
+		
+		return true;
+	}
+//HELPER FUNCTIONS FOR CHECKBOX CHECKING
+	function clearOnline() {
+		document.getElementById("away7").checked=false;
+	}
+	
+	function clearAwaysExceptOnline(){
+		for(var i = 1;i < 7;i++){
+				document.getElementById("away"+i).checked=false;
+		}
+	}
+//
+	//NOT IN USE
+	function changeBackgroundPic() {
+		var urlList = ["pics/jokerit.png","pics/hifk.png","pics/rangers.png","pics/blackhawks.png"];
+		document.body.style.backgroundImage = "url("+urlList[Math.floor( Math.random() * 4)]+")";
+	}
+	//
+	function changeBackgroundAsciiPic() {
+		var urlList = ["pics/jokerit.ascii","pics/hifk.ascii","pics/rangers.ascii","pics/blackhawks.ascii"];
+		$.get(urlList[Math.floor( Math.random() * 4)],
+			function(data){
+				$('.background-ascii').html(data);
+				
+			});
+		
+	}
+
+	function loadStats(){
+		var statsScript = document.createElement('script');
+		statsScript.async = "true";
+		statsScript.defer = "true";
+		statsScript.type = "text/javascript";
+		statsScript.src = "showStats.js?"+new Date().getTime();
+		document.body.appendChild(statsScript);
+		$('#loadStatsButton').html("LOADING...");
+		$('#loadStatsButton').addClass("checked");
+		
+		//show stats when load is ready
+		var quitLoading = 
+					function(){
+						setTimeout(
+								function(){
+									if($('.list').html() === "")
+										quitLoading();
+									else{
+										$('#loadStatsButton').hide();
+										$('#statsDiv').show(1500);
+									}
+								}
+							,500);
+					}
+		quitLoading();
+	}
+
+
+
+
+
+
+		//INIT CALLS HERE!
+		//IE BOILERPLATE
+		$.ajaxSettings.cache = false;
+
+
+		//disable panning on mobile (+ css for mobile ie)
+		document.getElementsByTagName('input').ontouchstart = function(e){ 
+			if (e.preventManipulation)
+				e.preventManipulation();
+			if(e.preventDefault)
+		    	e.preventDefault(); 
+		}
+
+		document.getElementsByTagName('select').ontouchstart = function(e){ 
+			if (e.preventManipulation)
+				e.preventManipulation();
+			if(e.preventDefault)
+		    	e.preventDefault(); 
+		}
+
+		var hgoals = $("#homegoals");
+	    var agoals = $("#awaygoals");
+	    
+		for (i=0;i<=21;i++){
+	        hgoals.append($('<option></option>').val(i).html(i))
+			agoals.append($('<option></option>').val(i).html(i))
+		}
+		
+		
+		changeBackgroundAsciiPic();
+	</script>
+	
+	
+	
+
+
+
+
+
+
