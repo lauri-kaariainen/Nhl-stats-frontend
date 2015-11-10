@@ -15,8 +15,8 @@
 				debugDiv.id ="debugDiv"
 				debugDiv.style.display = "none";
 				$('body').append(debugDiv);
-
-				var worker = new Worker("dbWorker.js");
+				
+				var worker = new Worker("dbWorker.js?"+new Date().getTime());
 
 				worker.onerror = function(error){
 					alert("error! "+error.message);

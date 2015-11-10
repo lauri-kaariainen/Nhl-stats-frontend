@@ -102,22 +102,15 @@ self.onmessage = function(e) {
 
     function handleDataToMakeHistoryListStringWithHTMLLineBreaks(data){
 	  var retString = "";
-	  var totalTimeCreatingDate = 0;
-	  var totalTime = 0;
 	  for(var i = data.length - 1; i > 0;i--){
-		var startTime = new Date().getTime();
-        
+		  
 		retString += "<br/>";
-		var localString = (new Date(data[i].timestamp))/*.toLocaleString();*/
-		totalTimeCreatingDate += new Date().getTime()-startTime
+		var localString = new Date(data[i].timestamp).toString().substr(0,25);
 		retString += localString+"--- "+data[i].home + " vs. "+data[i].away +": "+data[i].result;
-        totalTime += new Date().getTime()-startTime
-		
+    	
 	}
-	  console.debug("time creating date: "+totalTimeCreatingDate+"ms. total time: "+totalTime+"ms.");
-	  console.debug("handleDataToMakeHistoryListStringWithHTMLLineBreaks before return: " +(new Date().getTime()-historyListStringDebugStartTime));
-      return retString;
-
+	  return retString;
+	  
     }
 
     function handleDataToMakeHistoryListArray(data){
